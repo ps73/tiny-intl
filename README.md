@@ -4,5 +4,5 @@ A tiny library to translate or transform strings, dates and numbers based on nat
 
 ## Packages
 
-- [@gridventures/tiny-intl-core](./packages/tiny-intl-core)
-- [@gridventures/tiny-intl-react](./packages/tiny-intl-react)
+- [@tiny-intl/core](./packages/core)
+- [@tiny-intl/react](./packages/react)

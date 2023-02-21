@@ -1,11 +1,11 @@
-# @gridventures/tiny-intl-core
+# @tiny-intl/react
 
 A tiny library to translate or transform strings, dates and numbers based on native Intl.
 
 ## Installation
 
 ```bash
-npm install @gridventures/tiny-intl-react
+npm install @tiny-intl/react
 ```
 
 ## Usage
@@ -25,8 +25,8 @@ npm install @gridventures/tiny-intl-react
 ```
 
 ```jsx
-import { createTinyIntl, detectBrowserLocale } from '@gridventures/tiny-intl-core';
-import { TinyIntlContext } from '@gridventures/tiny-intl-react';
+import { createTinyIntl, detectBrowserLocale } from '@tiny-intl/core';
+import { TinyIntlContext } from '@tiny-intl/react';
 
 const intl = createTinyIntl({
   fallbackLocale: 'en-US',
@@ -63,7 +63,7 @@ const App = () => {
 This package uses native plural rules from Intl [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules).
 
 ```jsx
-import { useIntl, Translate } from '@gridventures/tiny-intl-react';
+import { useIntl, Translate } from '@tiny-intl/react';
 
 // via hook
 // MyComponent will re-render on locale change
@@ -99,7 +99,7 @@ const MyComponent = () => {
 Look at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) for more options.
 
 ```jsx
-import { useIntl } from '@gridventures/tiny-intl-react';
+import { useIntl } from '@tiny-intl/react';
 
 // via hook
 // MyComponent will re-render on locale change
@@ -131,7 +131,7 @@ const MyComponent = () => {
 Look at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) for more options.
 
 ```jsx
-import { useIntl } from '@gridventures/tiny-intl-react';
+import { useIntl } from '@tiny-intl/react';
 
 // via hook
 // MyComponent will re-render on locale change
@@ -161,7 +161,7 @@ const MyComponent = () => {
 ### Change locale
 
 ```jsx
-import { useIntl } from '@gridventures/tiny-intl-react';
+import { useIntl } from '@tiny-intl/react';
 
 const MyComponent = () => {
   const { change } = useIntl();

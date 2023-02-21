@@ -1,11 +1,11 @@
-# @gridventures/tiny-intl-core
+# @tiny-intl/core
 
 A tiny (~1kB gzipped) library to translate or transform strings, dates and numbers based on native Intl.
 
 ## Installation
 
 ```bash
-npm install @gridventures/tiny-intl-core
+npm install @tiny-intl/core
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ npm install @gridventures/tiny-intl-core
 ```
 
 ```js
-import { createTinyIntl, detectBrowserLocale } from '@gridventures/tiny-intl-core';
+import { createTinyIntl, detectBrowserLocale } from '@tiny-intl/core';
 
 const intl = createTinyIntl({
   fallbackLocale: 'en-US',

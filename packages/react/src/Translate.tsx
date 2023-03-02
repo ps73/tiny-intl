@@ -71,3 +71,5 @@ export function Translate(props: TranslateProps) {
 
   return <>{translateFn()}</>;
 }
+
+export const Trans = Translate;

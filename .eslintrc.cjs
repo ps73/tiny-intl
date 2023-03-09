@@ -22,8 +22,8 @@ module.exports = {
   extends: [
     '@gridventures/eslint-config-base',
     '@gridventures/eslint-config-typescript',
-    '@gridventures/eslint-config-typescript/react',
     '@gridventures/eslint-config-react',
+    '@gridventures/eslint-config-react/typescript',
     '@gridventures/eslint-config-react/hooks',
     '@gridventures/eslint-config-react/a11y',
     '@gridventures/eslint-config-base/prettier',

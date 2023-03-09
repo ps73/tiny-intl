@@ -5,7 +5,9 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { TinyIntlContext } from './useIntl';
 
-export type TranslateProps =
+export type TranslateProps = {
+  children?: (value: string | null) => React.ReactNode;
+} & (
   | {
       name: string;
       count?: number;
@@ -28,7 +30,8 @@ export type TranslateProps =
       date?: undefined;
       number?: number;
       options?: Intl.NumberFormatOptions;
-    };
+    }
+);
 
 export function Translate(props: TranslateProps) {
   const intl = useContext(TinyIntlContext);
@@ -38,7 +41,7 @@ export function Translate(props: TranslateProps) {
   }
 
   const { subscribe, t, tc, d, n } = intl;
-  const { name, count, date, number, options } = props; // eslint-disable-line no-shadow
+  const { name, count, date, number, options, children } = props; // eslint-disable-line no-shadow
 
   const [changed, setChanged] = useState(0);
 
@@ -69,7 +72,15 @@ export function Translate(props: TranslateProps) {
     return dispose;
   }, [intl]);
 
+  if (children && typeof children === 'function') {
+    return <>{children(translateFn())}</>;
+  }
+
   return <>{translateFn()}</>;
 }
 
 export const Trans = Translate;
+
+Translate.defaultProps = {
+  children: undefined,
+};

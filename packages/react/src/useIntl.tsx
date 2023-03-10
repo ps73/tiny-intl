@@ -27,6 +27,7 @@ export function useIntl() {
   }, [intl]);
 
   return {
+    ...intl,
     t,
     tc,
     n,

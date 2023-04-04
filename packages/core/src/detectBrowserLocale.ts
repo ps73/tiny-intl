@@ -1,7 +1,7 @@
-export function detectBrowserLocale<T extends string[]>(options: {
-  supportedLocales: T;
-  fallbackLocale: string;
-}) {
+export function detectBrowserLocale<T extends string>(options: {
+  supportedLocales: T[];
+  fallbackLocale: T;
+}): T {
   const defaultLocale = navigator?.languages?.[0] || navigator?.language;
   if (!defaultLocale) return options.fallbackLocale;
   const iso4Code = options.supportedLocales.find((loc) => loc === defaultLocale);

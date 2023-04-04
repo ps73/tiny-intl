@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TinyIntl } from '@tiny-intl/core';
 import type { Accessor } from 'solid-js';
 

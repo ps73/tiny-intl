@@ -40,8 +40,6 @@ export function Translate(props: TranslateProps) {
     throw new Error('useIntl must be used within a TinyIntlContext.Provider');
   }
 
-  const { subscribe, t, tc, d, n } = intl;
-
   const [changed, setChanged] = createSignal(0);
 
   const translateFn = createMemo(
@@ -49,19 +47,19 @@ export function Translate(props: TranslateProps) {
       changed();
 
       if (props.count) {
-        return tc(props.name, props.count, props.options);
+        return intl.tc(props.name, props.count, props.options);
       }
 
       if (props.date) {
-        return d(props.date, props.options);
+        return intl.d(props.date, props.options);
       }
 
       if (props.number) {
-        return n(props.number, props.options);
+        return intl.n(props.number, props.options);
       }
 
       if (props.name) {
-        return t(props.name, props.options);
+        return intl.t(props.name, props.options);
       }
 
       return null;
@@ -73,7 +71,7 @@ export function Translate(props: TranslateProps) {
   );
 
   createEffect(() => {
-    const dispose = subscribe(() => {
+    const dispose = intl.subscribe(() => {
       setChanged((prev) => prev + 1);
     });
     onCleanup(() => {

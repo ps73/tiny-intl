@@ -7,11 +7,11 @@ import solid from 'vite-plugin-solid';
 
 export default defineConfig({
   plugins: [
-    solid(),
     dts({
       outputDir: resolve(__dirname, 'lib', 'types'),
       insertTypesEntry: true,
     }),
+    solid(),
     visualizer({
       filename: 'dist/stats.html',
       gzipSize: true,

@@ -110,9 +110,9 @@ importers:
       vite-plugin-solid: ^2.6.1
     dependencies:
       '@tiny-intl/core': link:../core
-      solid-js: 1.7.1
     devDependencies:
       rollup-plugin-visualizer: 5.9.0
+      solid-js: 1.7.1
       typescript: 4.9.5
       vite: 4.1.3
       vite-plugin-dts: 2.0.0-beta.3_vite@4.1.3

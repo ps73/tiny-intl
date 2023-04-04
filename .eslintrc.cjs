@@ -22,10 +22,6 @@ module.exports = {
   extends: [
     '@gridventures/eslint-config-base',
     '@gridventures/eslint-config-typescript',
-    '@gridventures/eslint-config-react',
-    '@gridventures/eslint-config-react/typescript',
-    '@gridventures/eslint-config-react/hooks',
-    '@gridventures/eslint-config-react/a11y',
     '@gridventures/eslint-config-base/prettier',
   ],
 
@@ -36,7 +32,6 @@ module.exports = {
     '@typescript-eslint/no-unsafe-return': 'off',
     '@typescript-eslint/no-unsafe-argument': 'off',
     '@typescript-eslint/unbound-method': 'off',
-    'react/button-has-type': 'off',
     'import/extensions': [
       'error',
       {
@@ -49,4 +44,31 @@ module.exports = {
       },
     ],
   },
+
+  overrides: [
+    {
+      files: ['packages/react/**/*.ts', 'packages/react/**/*.tsx'],
+
+      extends: [
+        '@gridventures/eslint-config-react',
+        '@gridventures/eslint-config-react/typescript',
+        '@gridventures/eslint-config-react/hooks',
+        '@gridventures/eslint-config-react/a11y',
+        '@gridventures/eslint-config-base/prettier',
+      ],
+
+      rules: {
+        'react/prop-types': 'off',
+      },
+    },
+
+    {
+      files: ['packages/solid-js/**/*.ts', 'packages/solid-js/**/*.tsx'],
+
+      extends: [
+        '@gridventures/eslint-config-solid-js/typescript',
+        '@gridventures/eslint-config-base/prettier',
+      ],
+    },
+  ],
 };

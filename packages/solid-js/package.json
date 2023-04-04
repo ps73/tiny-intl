@@ -1,10 +1,10 @@
 {
-  "name": "@tiny-intl/core",
-  "version": "1.0.0-alpha.1",
+  "name": "@tiny-intl/solid-js",
+  "version": "1.0.1-alpha.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/gridventures/tiny-intl",
-    "directory": "packages/core"
+    "directory": "packages/solid-js"
   },
   "author": "Gridventures GmbH <office@gridventures.de>",
   "license": "MIT",
@@ -26,20 +26,15 @@
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "@tiny-intl/core": "^1.0.0-alpha.1",
+    "solid-js": "^1.7.1"
+  },
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^8.2.4",
-    "size-limit": "^8.2.4",
+    "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.5",
     "vite": "^4.1.0",
-    "vite-plugin-dts": "2.0.0-beta.3"
-  },
-  "dependencies": {
-    "flattie": "^1.1.0"
-  },
-  "size-limit": [
-    {
-      "path": "lib/index.js",
-      "limit": "1 kB"
-    }
-  ]
+    "vite-plugin-dts": "2.0.0-beta.3",
+    "vite-plugin-solid": "^2.6.1"
+  }
 }

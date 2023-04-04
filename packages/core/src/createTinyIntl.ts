@@ -25,17 +25,14 @@ export type TinyIntlTranslateTemplate = {
 type CreateTinyIntlOptions<Locales extends string> = {
   fallbackLocale: Locales;
   fallbackDict?: TinyIntlDict;
-  supportedLocales: readonly Locales[];
+  supportedLocales: Locales[];
   /**
    * @description Regex to match template variables, default example {{templateVar}}
    * @default /{{(.*?)}}/g
    * */
   templateRegex?: RegExp;
   loadDict?: (locale: Locales) => Promise<TinyIntlDict>;
-  detectLocale?: (param: {
-    supportedLocales: readonly Locales[];
-    fallbackLocale: Locales;
-  }) => Locales;
+  detectLocale?: (param: { supportedLocales: Locales[]; fallbackLocale: Locales }) => Locales;
 };
 
 export type TinyIntl<Locales extends string> = {

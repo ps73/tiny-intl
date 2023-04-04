@@ -1,5 +1,5 @@
-export function detectBrowserLocale(options: {
-  supportedLocales: readonly string[];
+export function detectBrowserLocale<T extends string[]>(options: {
+  supportedLocales: T;
   fallbackLocale: string;
 }) {
   const defaultLocale = navigator?.languages?.[0] || navigator?.language;

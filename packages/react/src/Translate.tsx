@@ -37,7 +37,7 @@ export function Translate(props: TranslateProps) {
   const intl = useContext(TinyIntlContext);
 
   if (!intl) {
-    throw new Error('useIntl must be used within a intlContext.Provider');
+    throw new Error('useIntl must be used within a TinyIntlContext.Provider');
   }
 
   const { subscribe, t, tc, d, n } = intl;

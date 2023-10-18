@@ -9,7 +9,7 @@ export function automaticRelativeTimeFormat(
 ): [number, Intl.RelativeTimeFormatUnit] {
   const oldTs = new Date(date).getTime();
   const now = Date.now();
-  const diff = (now - oldTs) / 1000;
+  const diff = (oldTs - now) / 1000;
 
   if (diff < m && diff > -m) {
     return [diff, 'seconds'];

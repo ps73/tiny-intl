@@ -12,7 +12,7 @@ export default defineConfig({
       jsxRuntime: 'classic',
     }),
     dts({
-      outputDir: resolve(__dirname, 'lib', 'types'),
+      outDir: resolve(__dirname, 'lib', 'types'),
       insertTypesEntry: true,
     }),
     visualizer({

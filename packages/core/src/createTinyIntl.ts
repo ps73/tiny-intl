@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { flattie } from 'flattie';
 
+import { automaticRelativeTimeFormat } from './utils';
+
 export type TinyIntlPluralDefinition = {
   zero?: string;
   one: string;
@@ -22,7 +24,11 @@ export type TinyIntlTranslateTemplate = {
   [key: string]: string | number;
 };
 
-type CreateTinyIntlOptions<Locales extends string> = {
+export type TinyIntlRelativeTimeFormatOptions = Intl.RelativeTimeFormatOptions & {
+  fallback?: (v: Date | string | number, u: Intl.RelativeTimeFormatUnit) => string;
+};
+
+export type CreateTinyIntlOptions<Locales extends string> = {
   fallbackLocale: Locales;
   fallbackDict?: TinyIntlDict;
   supportedLocales: Locales[];
@@ -42,7 +48,15 @@ export type TinyIntl<Locales extends string> = {
   t: (key: string, templateParams?: TinyIntlTranslateTemplate) => string;
   tc: (key: string, count: number, templateParams?: TinyIntlTranslateTemplate) => string;
   n: (number: number, options?: Intl.NumberFormatOptions) => string;
-  d: (date: Date | string | number, options?: Intl.DateTimeFormatOptions) => string;
+  dt: (date: Date | string | number, options?: Intl.DateTimeFormatOptions) => string;
+  /**
+   * @deprecated use dt instead. Will be removed in stable release.
+   */
+  d: TinyIntl<Locales>['dt'];
+  rt: (date: Date | string | number, options?: TinyIntlRelativeTimeFormatOptions) => string;
+  collator: (options?: Intl.CollatorOptions) => (x: string, y: string) => number;
+  sort: (items: string[], options?: Intl.CollatorOptions) => string[];
+  list: () => (x: string[]) => string;
   subscribe: (cb: () => void) => () => void;
   mount: () => Promise<void>;
 };
@@ -56,8 +70,11 @@ export function createTinyIntl<Locales extends string>(
   let mounted = false;
   let locale: Locales = fallbackLocale;
   let pluralRules: Intl.PluralRules = new Intl.PluralRules(fallbackLocale);
-  let numberFormatCache = new Map<string, Intl.NumberFormat>();
-  let dateFormatCache = new Map<string, Intl.DateTimeFormat>();
+  const numberFormatCache = new Map<string, Intl.NumberFormat>();
+  const dateTimeFormatCache = new Map<string, Intl.DateTimeFormat>();
+  const relativeTimeFormatCache = new Map<string, Intl.RelativeTimeFormat>();
+  const listFormatCache = new Map<string, Intl.ListFormat>();
+  const collatorCache = new Map<string, Intl.Collator>();
   let dict: TinyIntlFlatDict = flattie(fallbackDict || {});
   const subscriptions = new Set<() => void>();
 
@@ -67,8 +84,12 @@ export function createTinyIntl<Locales extends string>(
     }
     locale = nextLocale;
     pluralRules = new Intl.PluralRules(locale);
-    numberFormatCache = new Map<string, Intl.NumberFormat>();
-    dateFormatCache = new Map<string, Intl.DateTimeFormat>();
+    numberFormatCache.clear();
+    dateTimeFormatCache.clear();
+    relativeTimeFormatCache.clear();
+    numberFormatCache.clear();
+    listFormatCache.clear();
+    collatorCache.clear();
     if (loadDict) {
       const nextDict = await loadDict(locale);
       dict = flattie<TinyIntlFlatDict, TinyIntlDict>(nextDict);
@@ -110,18 +131,76 @@ export function createTinyIntl<Locales extends string>(
     return formatter.format(number);
   }
 
-  function d(date: Date | string | number, options?: Intl.DateTimeFormatOptions): string {
+  function dt(date: Date | string | number, options?: Intl.DateTimeFormatOptions): string {
     const dateValue = new Date(date);
     const cacheKey = JSON.stringify(options || {});
-    let formatter = dateFormatCache.get(locale);
+    let formatter = dateTimeFormatCache.get(locale);
     if (!formatter) {
       formatter = new Intl.DateTimeFormat(locale, options);
-      dateFormatCache.set(cacheKey, formatter);
+      dateTimeFormatCache.set(cacheKey, formatter);
     }
     return formatter.format(dateValue);
   }
 
-  function subscribe(cb: () => void) {
+  // Intl.RelativeTimeFormat is not supported in Safari < 14 or on MacOS < 11
+  function rt(date: Date | string | number, options?: TinyIntlRelativeTimeFormatOptions): string {
+    const { fallback, ...rtOptions } = options || {};
+    const [value, unit] = automaticRelativeTimeFormat(date);
+    if (!Intl.RelativeTimeFormat) {
+      console.warn('Intl.RelativeTimeFormat is not supported in this browser');
+      if (fallback) {
+        return fallback(value, unit);
+      }
+      return '';
+    }
+    const cacheKey = JSON.stringify(rtOptions || {});
+    let formatter = relativeTimeFormatCache.get(locale);
+    if (!formatter) {
+      formatter = new Intl.RelativeTimeFormat(locale, rtOptions);
+      relativeTimeFormatCache.set(cacheKey, formatter);
+    }
+    return formatter.format(value, unit);
+  }
+
+  function collator(options?: Intl.CollatorOptions) {
+    if (!Intl.Collator) {
+      console.warn('Intl.Collator is not supported in this browser');
+      return (x: string, y: string) => x.localeCompare(y);
+    }
+    const cacheKey = JSON.stringify(options || {});
+    let formatter = collatorCache.get(locale);
+    if (!formatter) {
+      formatter = new Intl.Collator(locale, options);
+      collatorCache.set(cacheKey, formatter);
+    }
+    return formatter.compare;
+  }
+
+  function sort(items: string[], options?: Intl.CollatorOptions): string[] {
+    const fn = collator(options);
+    return [...items].sort(fn);
+  }
+
+  function list(options?: Intl.ListFormatOptions | 'AND' | 'OR') {
+    if (!Intl.ListFormat) {
+      console.warn('Intl.ListFormat is not supported in this browser');
+      return (x: string[]) => x.join(', ');
+    }
+    let type: 'conjunction' | 'disjunction' = 'conjunction';
+    if (options === 'OR') {
+      type = 'disjunction';
+    }
+    const intlOptions = typeof options === 'string' ? ({ type, style: 'long' } as const) : options;
+    const cacheKey = JSON.stringify(intlOptions);
+    let formatter = listFormatCache.get(locale);
+    if (!formatter) {
+      formatter = new Intl.ListFormat(locale, intlOptions);
+      listFormatCache.set(cacheKey, formatter);
+    }
+    return formatter.format;
+  }
+
+  function subscribe(cb: (newLocale?: string) => void) {
     subscriptions.add(cb);
 
     return () => {
@@ -157,7 +236,12 @@ export function createTinyIntl<Locales extends string>(
     t,
     tc,
     n,
-    d,
+    d: dt,
+    dt,
+    rt,
+    collator,
+    sort,
+    list,
     mount,
   };
 }

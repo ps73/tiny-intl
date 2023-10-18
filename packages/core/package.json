@@ -27,19 +27,12 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^8.2.4",
-    "size-limit": "^8.2.4",
-    "typescript": "^4.9.5",
+    "rollup-plugin-visualizer": "^5.9.2",
+    "typescript": "^5.2.2",
     "vite": "^4.1.0",
-    "vite-plugin-dts": "2.0.0-beta.3"
+    "vite-plugin-dts": "3.6.0"
   },
   "dependencies": {
     "flattie": "^1.1.0"
-  },
-  "size-limit": [
-    {
-      "path": "lib/index.js",
-      "limit": "1 kB"
-    }
-  ]
+  }
 }

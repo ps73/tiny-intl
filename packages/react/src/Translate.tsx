@@ -9,27 +9,44 @@ export type TranslateProps = {
   children?: (value: string | null) => React.ReactNode;
 } & (
   | {
+      // Case: string translation
       name: string;
       count?: number;
       date?: undefined;
       number?: undefined;
       options?: TinyIntlTranslateTemplate;
+      relative?: undefined;
+      unit?: undefined;
     }
   | {
+      // Case: dateFormat
       name?: undefined;
       count?: undefined;
       data?: undefined;
       date?: Date | string | number;
       number?: undefined;
       options?: Intl.DateTimeFormatOptions;
+      relative?: undefined;
     }
   | {
+      // Case: relativeTimeFormat
+      name?: undefined;
+      count?: undefined;
+      data?: undefined;
+      date?: Date | string | number;
+      number?: undefined;
+      options?: Intl.RelativeTimeFormatOptions;
+      relative?: true;
+    }
+  | {
+      // Case: numberFormat
       name?: undefined;
       count?: undefined;
       data?: undefined;
       date?: undefined;
       number?: number;
       options?: Intl.NumberFormatOptions;
+      relative?: undefined;
     }
 );
 
@@ -40,8 +57,8 @@ export function Translate(props: TranslateProps) {
     throw new Error('useIntl must be used within a TinyIntlContext.Provider');
   }
 
-  const { subscribe, t, tc, d, n } = intl;
-  const { name, count, date, number, options, children } = props; // eslint-disable-line no-shadow
+  const { subscribe, t, tc, dt, n, rt } = intl;
+  const { name, count, date, number, options, children, relative } = props; // eslint-disable-line no-shadow
 
   const [changed, setChanged] = useState(0);
 
@@ -50,8 +67,12 @@ export function Translate(props: TranslateProps) {
       return tc(name, count, options);
     }
 
-    if (date) {
-      return d(date, options);
+    if (date && !relative) {
+      return dt(date, options);
+    }
+
+    if (date && relative) {
+      return rt(date, options);
     }
 
     if (number) {

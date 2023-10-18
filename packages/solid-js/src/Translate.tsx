@@ -1,7 +1,7 @@
 import type { TinyIntlTranslateTemplate } from '@tiny-intl/core';
 import type { JSX } from 'solid-js';
 
-import { Show, createEffect, createMemo, createSignal, onCleanup, useContext } from 'solid-js';
+import { Show, createMemo, createSignal, onCleanup, onMount, useContext } from 'solid-js';
 
 import { TinyIntlContext } from './useIntl';
 
@@ -9,27 +9,44 @@ export type TranslateProps = {
   children?: (value: string | null) => JSX.Element;
 } & (
   | {
+      // Case: string translation
       name: string;
       count?: number;
       date?: undefined;
       number?: undefined;
       options?: TinyIntlTranslateTemplate;
+      relative?: undefined;
+      unit?: undefined;
     }
   | {
+      // Case: dateFormat
       name?: undefined;
       count?: undefined;
       data?: undefined;
       date?: Date | string | number;
       number?: undefined;
       options?: Intl.DateTimeFormatOptions;
+      relative?: undefined;
     }
   | {
+      // Case: relativeTimeFormat
+      name?: undefined;
+      count?: undefined;
+      data?: undefined;
+      date?: Date | string | number;
+      number?: undefined;
+      options?: Intl.RelativeTimeFormatOptions;
+      relative?: true;
+    }
+  | {
+      // Case: numberFormat
       name?: undefined;
       count?: undefined;
       data?: undefined;
       date?: undefined;
       number?: number;
       options?: Intl.NumberFormatOptions;
+      relative?: undefined;
     }
 );
 
@@ -50,8 +67,12 @@ export function Translate(props: TranslateProps) {
         return intl.tc(props.name, props.count, props.options);
       }
 
-      if (props.date) {
-        return intl.d(props.date, props.options);
+      if (props.date && !props.relative) {
+        return intl.dt(props.date, props.options);
+      }
+
+      if (props.date && props.relative) {
+        return intl.rt(props.date, props.options);
       }
 
       if (props.number) {
@@ -70,7 +91,7 @@ export function Translate(props: TranslateProps) {
     },
   );
 
-  createEffect(() => {
+  onMount(() => {
     const dispose = intl.subscribe(() => {
       setChanged((prev) => prev + 1);
     });

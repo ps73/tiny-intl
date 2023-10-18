@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import type { TinyIntl } from '../../core/lib/types';
+import type { TinyIntl } from '@tiny-intl/core';
 
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
@@ -17,7 +17,11 @@ export function useIntl() {
   const t = useCallback(intl.t, [changed]);
   const tc = useCallback(intl.tc, [changed]);
   const n = useCallback(intl.n, [changed]);
-  const d = useCallback(intl.d, [changed]);
+  const dt = useCallback(intl.dt, [changed]);
+  const rt = useCallback(intl.rt, [changed]);
+  const sort = useCallback(intl.sort, [changed]);
+  const collator = useCallback(intl.collator, [changed]);
+  const list = useCallback(intl.list, [changed]);
 
   useEffect(() => {
     const dispose = intl.subscribe(() => {
@@ -31,7 +35,15 @@ export function useIntl() {
     t,
     tc,
     n,
-    d,
+    /**
+     * @deprecated use dt instead. Will be removed in stable release.
+     */
+    d: dt,
+    dt,
+    rt,
+    sort,
+    collator,
+    list,
     change: intl.change,
   };
 }

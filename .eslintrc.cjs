@@ -43,6 +43,7 @@ module.exports = {
         json: 'always',
       },
     ],
+    'no-console': ['error', { allow: ['warn', 'error'] }],
   },
 
   overrides: [

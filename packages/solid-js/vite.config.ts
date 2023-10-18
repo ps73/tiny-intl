@@ -8,7 +8,7 @@ import solid from 'vite-plugin-solid';
 export default defineConfig({
   plugins: [
     dts({
-      outputDir: resolve(__dirname, 'lib', 'types'),
+      outDir: resolve(__dirname, 'lib', 'types'),
       insertTypesEntry: true,
     }),
     solid(),

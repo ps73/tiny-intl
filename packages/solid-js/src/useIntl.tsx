@@ -51,7 +51,11 @@ export function useIntl() {
   const t = memoizeCallback(intl.t, () => changed);
   const tc = memoizeCallback(intl.tc, () => changed);
   const n = memoizeCallback(intl.n, () => changed);
-  const d = memoizeCallback(intl.d, () => changed);
+  const dt = memoizeCallback(intl.dt, () => changed);
+  const rt = memoizeCallback(intl.rt, () => changed);
+  const sort = memoizeCallback(intl.sort, () => changed);
+  const collator = memoizeCallback(intl.collator, () => changed);
+  const list = memoizeCallback(intl.list, () => changed);
 
   createEffect(() => {
     const dispose = intl.subscribe(() => {
@@ -67,7 +71,15 @@ export function useIntl() {
     t,
     tc,
     n,
-    d,
+    dt,
+    /**
+     * @deprecated use dt instead. Will be removed in stable release.
+     */
+    d: dt,
+    rt,
+    sort,
+    collator,
+    list,
     change: intl.change,
     getLocale,
   };

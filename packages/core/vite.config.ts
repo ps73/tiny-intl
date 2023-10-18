@@ -1,13 +1,19 @@
 import { resolve } from 'path';
 
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   plugins: [
     dts({
-      outputDir: resolve(__dirname, 'lib', 'types'),
+      outDir: resolve(__dirname, 'lib', 'types'),
       insertTypesEntry: true,
+    }),
+    visualizer({
+      filename: 'dist/stats.html',
+      gzipSize: true,
+      brotliSize: true,
     }),
   ],
   build: {

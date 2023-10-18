@@ -1,6 +1,6 @@
 # @tiny-intl/core
 
-A tiny (~1kB gzipped) library to translate or transform strings, dates and numbers based on native Intl.
+A tiny (~1.5kB gzipped) library to translate or transform strings, dates and numbers based on native Intl.
 
 ## Installation
 

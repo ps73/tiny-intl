@@ -5,7 +5,7 @@ A tiny library to translate or transform strings, dates and numbers based on nat
 ## Installation
 
 ```bash
-npm install @tiny-intl/solid-js
+npm install @tiny-intl/core @tiny-intl/solid-js
 ```
 
 ## Usage

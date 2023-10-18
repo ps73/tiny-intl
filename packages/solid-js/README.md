@@ -122,6 +122,37 @@ const MyComponent = () => {
 };
 ```
 
+### Relative Time Formatting
+
+Look at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat) for more options.
+
+```jsx
+import { useIntl } from '@tiny-intl/solid-js';
+
+// via primitive
+const MyComponent = () => {
+  const { rt } = useIntl();
+  const date = new Date('2023-10-18T21:44:00.000z');
+
+  return (
+    <div>
+      {/* 1 day ago */}
+      {rt(date)}
+    </div>
+  );
+};
+
+// via component
+const MyComponent = () => {
+  return (
+    <div>
+      {/* 1 day ago */}
+      <Translate date={new Date()} relative options={{}} />
+    </div>
+  );
+};
+```
+
 ### Formatting numbers
 
 Look at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) for more options.
@@ -147,6 +178,58 @@ const MyComponent = () => {
     <div>
       {/* €123,456.79 */}
       <Translate number={123456.789} options={{ style: 'currency', currency: 'EUR' }} />
+    </div>
+  );
+};
+```
+
+### List Formatting
+
+Look at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat) for more options.
+
+> [!NOTE]  
+> Only available via primitive.
+
+```jsx
+import { useIntl } from '@tiny-intl/solid-js';
+
+// via primitive
+const MyComponent = () => {
+  const { list } = useIntl();
+
+  return (
+    <div>
+      {/* a, b, and c */}
+      {list(['a', 'b', 'c'])}
+      {/* a, b, or c */}
+      {list(['a', 'b', 'c'], 'OR')}
+      {/* a b c */}
+      {list(['a', 'b', 'c'], { type: 'unit', style: 'narrow' })}
+    </div>
+  );
+};
+```
+
+### Sorting
+
+Look at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator) for more options.
+
+> [!NOTE]
+> Only available via primitive.
+
+```jsx
+import { useIntl } from '@tiny-intl/solid-js';
+
+// via primitive
+const MyComponent = () => {
+  const { sort, collator } = useIntl();
+
+  return (
+    <div>
+      {/* en-US: ['a', 'ä', 'Z', 'z'], swedish: ['a', 'Z', 'z', 'ä'] */}
+      {sort(['Z', 'a', 'z', 'ä'], { caseFirst: 'upper' })}
+      {/* [{ name: 'a' }, { name: 'Z' }] */}
+      {[{ name: 'Z' }, { name: 'a' }].sort((a, b) => collator(a.name, b.name))}
     </div>
   );
 };

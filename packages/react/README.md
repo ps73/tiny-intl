@@ -104,12 +104,12 @@ import { useIntl } from '@tiny-intl/react';
 // via hook
 // MyComponent will re-render on locale change
 const MyComponent = () => {
-  const { d } = useIntl();
+  const { dt } = useIntl();
 
   return (
     <div>
       {/* Tuesday, April 6, 2021 */}
-      {d(new Date(), { dateStyle: 'full' })}
+      {dt(new Date(), { dateStyle: 'full' })}
     </div>
   );
 };
@@ -121,6 +121,39 @@ const MyComponent = () => {
     <div>
       {/* Tuesday, April 6, 2021 */}
       <Translate date={new Date()} options={{ dateStyle: 'fullDate' }} />
+    </div>
+  );
+};
+```
+
+### Relative Time Formatting
+
+Look at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat) for more options.
+
+```jsx
+import { useIntl } from '@tiny-intl/react';
+
+// via hook
+// MyComponent will re-render on locale change
+const MyComponent = () => {
+  const { rt } = useIntl();
+  const date = new Date('2023-10-18T21:44:00.000z');
+
+  return (
+    <div>
+      {/* 1 day ago */}
+      {rt(date)}
+    </div>
+  );
+};
+
+// via component
+// MyComponent will not re-render on locale change
+const MyComponent = () => {
+  return (
+    <div>
+      {/* 1 day ago */}
+      <Translate date={new Date()} relative options={{}} />
     </div>
   );
 };
@@ -153,6 +186,60 @@ const MyComponent = () => {
     <div>
       {/* €123,456.79 */}
       <Translate number={123456.789} options={{ style: 'currency', currency: 'EUR' }} />
+    </div>
+  );
+};
+```
+
+### List Formatting
+
+Look at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat) for more options.
+
+> [!NOTE]  
+> Only available via hook.
+
+```jsx
+import { useIntl } from '@tiny-intl/react';
+
+// via hook
+// MyComponent will re-render on locale change
+const MyComponent = () => {
+  const { list } = useIntl();
+
+  return (
+    <div>
+      {/* a, b, and c */}
+      {list(['a', 'b', 'c'])}
+      {/* a, b, or c */}
+      {list(['a', 'b', 'c'], 'OR')}
+      {/* a b c */}
+      {list(['a', 'b', 'c'], { type: 'unit', style: 'narrow' })}
+    </div>
+  );
+};
+```
+
+### Sorting
+
+Look at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator) for more options.
+
+> [!NOTE]
+> Only available via hook.
+
+```jsx
+import { useIntl } from '@tiny-intl/react';
+
+// via hook
+// MyComponent will re-render on locale change
+const MyComponent = () => {
+  const { sort, collator } = useIntl();
+
+  return (
+    <div>
+      {/* en-US: ['a', 'ä', 'Z', 'z'], swedish: ['a', 'Z', 'z', 'ä'] */}
+      {sort(['Z', 'a', 'z', 'ä'], { caseFirst: 'upper' })}
+      {/* [{ name: 'a' }, { name: 'Z' }] */}
+      {[{ name: 'Z' }, { name: 'a' }].sort((a, b) => collator(a.name, b.name))}
     </div>
   );
 };

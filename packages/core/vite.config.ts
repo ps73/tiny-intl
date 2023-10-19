@@ -1,8 +1,8 @@
 import { resolve } from 'path';
 
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import { defineConfig } from 'vitest/config'; // eslint-disable-line import/no-unresolved
 
 export default defineConfig({
   plugins: [
@@ -33,4 +33,5 @@ export default defineConfig({
       },
     },
   },
+  test: {},
 });

@@ -25,8 +25,10 @@ export type TinyIntlTranslateTemplate = {
 };
 
 export type TinyIntlRelativeTimeFormatOptions = Intl.RelativeTimeFormatOptions & {
-  fallback?: (v: Date | string | number, u: Intl.RelativeTimeFormatUnit) => string;
+  fallback?: (v: number, u: Intl.RelativeTimeFormatUnit) => string;
 };
+
+export type TinyIntlSubscriptionCallback<Locales extends string> = (nextLocale: Locales) => void;
 
 export type CreateTinyIntlOptions<Locales extends string> = {
   fallbackLocale: Locales;
@@ -37,14 +39,14 @@ export type CreateTinyIntlOptions<Locales extends string> = {
    * @default /{{(.*?)}}/g
    * */
   templateRegex?: RegExp;
-  loadDict?: (locale: Locales) => Promise<TinyIntlDict>;
+  loadDict?: (locale: Locales) => Promise<TinyIntlDict> | TinyIntlDict;
   detectLocale?: (param: { supportedLocales: Locales[]; fallbackLocale: Locales }) => Locales;
 };
 
 export type TinyIntl<Locales extends string> = {
   locale: Locales;
   getLocale: () => Locales;
-  change: (locale: Locales) => Promise<TinyIntlFlatDict>;
+  change: (locale: Locales, staticDict?: TinyIntlDict) => Promise<TinyIntlFlatDict>;
   t: (key: string, templateParams?: TinyIntlTranslateTemplate) => string;
   tc: (key: string, count: number, templateParams?: TinyIntlTranslateTemplate) => string;
   n: (number: number, options?: Intl.NumberFormatOptions) => string;
@@ -56,10 +58,14 @@ export type TinyIntl<Locales extends string> = {
   rt: (date: Date | string | number, options?: TinyIntlRelativeTimeFormatOptions) => string;
   collator: (options?: Intl.CollatorOptions) => (x: string, y: string) => number;
   sort: (items: string[], options?: Intl.CollatorOptions) => string[];
-  list: () => (x: string[]) => string;
-  subscribe: (cb: () => void) => () => void;
+  list: (items: string[], options?: Intl.ListFormatOptions) => string;
+  subscribe: (cb: TinyIntlSubscriptionCallback<Locales>) => () => void;
   mount: () => Promise<void>;
 };
+
+function newCacheKey(v?: object | undefined) {
+  return v ? JSON.stringify(v) : '_';
+}
 
 export function createTinyIntl<Locales extends string>(
   i18nOptions: CreateTinyIntlOptions<Locales>,
@@ -76,7 +82,7 @@ export function createTinyIntl<Locales extends string>(
   const listFormatCache = new Map<string, Intl.ListFormat>();
   const collatorCache = new Map<string, Intl.Collator>();
   let dict: TinyIntlFlatDict = flattie(fallbackDict || {});
-  const subscriptions = new Set<() => void>();
+  const subscriptions = new Set<TinyIntlSubscriptionCallback<Locales>>();
 
   async function change(nextLocale: Locales, staticDict?: TinyIntlDict) {
     if (locale === nextLocale) {
@@ -90,13 +96,13 @@ export function createTinyIntl<Locales extends string>(
     numberFormatCache.clear();
     listFormatCache.clear();
     collatorCache.clear();
-    if (loadDict) {
+    if (staticDict) {
+      dict = flattie<TinyIntlFlatDict, TinyIntlDict>(staticDict);
+    } else if (loadDict) {
       const nextDict = await loadDict(locale);
       dict = flattie<TinyIntlFlatDict, TinyIntlDict>(nextDict);
-    } else if (staticDict) {
-      dict = flattie<TinyIntlFlatDict, TinyIntlDict>(staticDict);
     }
-    subscriptions.forEach((cb) => cb());
+    subscriptions.forEach((cb) => cb(locale));
     return dict;
   }
 
@@ -109,20 +115,20 @@ export function createTinyIntl<Locales extends string>(
 
   function t(key: string, templateParams?: TinyIntlTranslateTemplate): string {
     const value = dict[key] || dict[`${key}.one`] || `[${key}]`;
-    if (templateParams) {
-      return template(value, templateParams);
-    }
-    return value;
+    return template(value, templateParams || {});
   }
 
   function tc(key: string, count: number, templateParams?: TinyIntlTranslateTemplate): string {
     const pluralKey = pluralRules.select(count);
     const tKey = `${key}.${pluralKey}`;
-    return t(tKey, templateParams);
+    return t(tKey, {
+      count,
+      ...templateParams,
+    });
   }
 
   function n(number: number, options?: Intl.NumberFormatOptions): string {
-    const cacheKey = JSON.stringify(options || {});
+    const cacheKey = newCacheKey(options);
     let formatter = numberFormatCache.get(locale);
     if (!formatter) {
       formatter = new Intl.NumberFormat(locale, options);
@@ -133,7 +139,7 @@ export function createTinyIntl<Locales extends string>(
 
   function dt(date: Date | string | number, options?: Intl.DateTimeFormatOptions): string {
     const dateValue = new Date(date);
-    const cacheKey = JSON.stringify(options || {});
+    const cacheKey = newCacheKey(options);
     let formatter = dateTimeFormatCache.get(locale);
     if (!formatter) {
       formatter = new Intl.DateTimeFormat(locale, options);
@@ -153,7 +159,7 @@ export function createTinyIntl<Locales extends string>(
       }
       return '';
     }
-    const cacheKey = JSON.stringify(rtOptions || {});
+    const cacheKey = newCacheKey(rtOptions);
     let formatter = relativeTimeFormatCache.get(locale);
     if (!formatter) {
       formatter = new Intl.RelativeTimeFormat(locale, rtOptions);
@@ -167,7 +173,7 @@ export function createTinyIntl<Locales extends string>(
       console.warn('Intl.Collator is not supported in this browser');
       return (x: string, y: string) => x.localeCompare(y);
     }
-    const cacheKey = JSON.stringify(options || {});
+    const cacheKey = newCacheKey(options || {});
     let formatter = collatorCache.get(locale);
     if (!formatter) {
       formatter = new Intl.Collator(locale, options);
@@ -181,26 +187,26 @@ export function createTinyIntl<Locales extends string>(
     return [...items].sort(fn);
   }
 
-  function list(options?: Intl.ListFormatOptions | 'AND' | 'OR') {
+  function list(items: string[], options?: Intl.ListFormatOptions | 'AND' | 'OR') {
     if (!Intl.ListFormat) {
       console.warn('Intl.ListFormat is not supported in this browser');
-      return (x: string[]) => x.join(', ');
+      return items.join(', ');
     }
     let type: 'conjunction' | 'disjunction' = 'conjunction';
     if (options === 'OR') {
       type = 'disjunction';
     }
     const intlOptions = typeof options === 'string' ? ({ type, style: 'long' } as const) : options;
-    const cacheKey = JSON.stringify(intlOptions);
+    const cacheKey = newCacheKey(intlOptions);
     let formatter = listFormatCache.get(locale);
     if (!formatter) {
       formatter = new Intl.ListFormat(locale, intlOptions);
       listFormatCache.set(cacheKey, formatter);
     }
-    return formatter.format;
+    return formatter.format(items);
   }
 
-  function subscribe(cb: (newLocale?: string) => void) {
+  function subscribe(cb: TinyIntlSubscriptionCallback<Locales>) {
     subscriptions.add(cb);
 
     return () => {

@@ -1,6 +1,8 @@
 # @tiny-intl/core
 
-A tiny (~1.5kB gzipped) library to translate or transform strings, dates and numbers based on native Intl.
+![Bundle Size](https://deno.bundlejs.com/badge?q=@tiny-intl/core&treeshake=%5B*%5D)
+
+A tiny library to translate or transform strings, dates and numbers based on native Intl.
 
 ## Installation
 
@@ -117,8 +119,8 @@ intl.list(['a', 'b', 'c'], { type: 'unit', style: 'narrow' }); // a b c
 ### Listen to locale changes
 
 ```js
-const unsubscribe = intl.subscribe(() => {
-  console.log(intl.getLocale()); // de-DE
+const unsubscribe = intl.subscribe((nextLocale) => {
+  console.log(nextLocale); // de-DE
 });
 
 await intl.change('de-DE'); // de-DE

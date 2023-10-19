@@ -1,6 +1,6 @@
 # @tiny-intl/react
 
-![Bundle Size](https://deno.bundlejs.com/badge?q=@tiny-intl/react&treeshake=%5B%7B+Translate+%7D%5D&config=%7B%22esbuild%22:%7B%22external%22:%5B%22react%22,%22react-dom%22,%22react-jsx-runtime%22%5D%7D%7D)
+![Bundle Size](https://deno.bundlejs.com/badge?q=@tiny-intl/react&treeshake=%5B*%5D&config=%7B%22esbuild%22:%7B%22external%22:%5B%22react%22%5D%7D%7D)
 
 A tiny library to translate or transform strings, dates and numbers based on native Intl.
 

@@ -18,7 +18,8 @@
   "exports": {
     ".": {
       "import": "./lib/index.js",
-      "require": "./lib/index.umd.cjs"
+      "require": "./lib/index.umd.cjs",
+      "types": "./lib/types/index.d.ts"
     }
   },
   "scripts": {

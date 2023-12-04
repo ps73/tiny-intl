@@ -30,12 +30,11 @@ export default defineConfig({
       formats: ['es', 'cjs', 'umd'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react-jsx-runtime'],
+      external: ['preact', 'preact/compat'],
       output: {
         globals: {
-          'react': 'React',
-          'react-dom': 'ReactDOM',
-          'react-jsx-runtime': 'React',
+          'preact': 'Preact',
+          'preact/compat': 'PreactCompat',
         },
       },
     },

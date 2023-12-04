@@ -6,7 +6,7 @@
     "url": "https://github.com/gridventures/tiny-intl",
     "directory": "packages/solid-js"
   },
-  "author": "Gridventures GmbH <office@gridventures.de>",
+  "author": "Phil Schaffarzyk <phil.schaffarzyk@gmail.com>",
   "license": "MIT",
   "type": "module",
   "files": [

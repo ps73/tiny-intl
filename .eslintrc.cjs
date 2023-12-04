@@ -48,7 +48,12 @@ module.exports = {
 
   overrides: [
     {
-      files: ['packages/react/**/*.ts', 'packages/react/**/*.tsx'],
+      files: [
+        'packages/react/**/*.ts',
+        'packages/react/**/*.tsx',
+        'packages/preact/**/*.ts',
+        'packages/preact/**/*.tsx',
+      ],
 
       extends: [
         '@gridventures/eslint-config-react',

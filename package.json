@@ -12,7 +12,7 @@
     "prepare": "husky install"
   },
   "keywords": [],
-  "author": "Gridventures GmbH<office@gridventures.de>",
+  "author": "Phil Schaffarzyk<office@gridventures.de>",
   "license": "MIT",
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",

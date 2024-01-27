@@ -50,7 +50,9 @@ describe('@tiny-intl/core', () => {
 
   it('mount instance', async ({ expect }) => {
     intl = createTinyIntl<'en-US' | 'de-DE' | 'sv-SE'>({
-      loadDict,
+      loadDict: (locale) => {
+        return loadDict(locale);
+      },
       fallbackLocale: 'en-US',
       supportedLocales: ['en-US', 'de-DE', 'sv-SE'],
       detectLocale: (params) => detectLocale('en-US', params),

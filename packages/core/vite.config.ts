@@ -18,6 +18,7 @@ export default defineConfig({
   ],
   build: {
     outDir: resolve(__dirname, 'lib'),
+    minify: false,
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, 'src', 'index.ts'),

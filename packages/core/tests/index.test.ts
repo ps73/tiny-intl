@@ -61,6 +61,20 @@ describe('@tiny-intl/core', () => {
     expect(intl.locale).toBe('en-US');
   });
 
+  it('mount instance with single locale', async ({ expect }) => {
+    const intl2 = createTinyIntl<'de-DE'>({
+      loadDict: (locale) => {
+        return loadDict(locale);
+      },
+      fallbackLocale: 'de-DE',
+      supportedLocales: ['de-DE'],
+      detectLocale: (params) => detectLocale('de-DE', params),
+    });
+    await intl2.mount();
+    expect(intl2.locale).toBe('de-DE');
+    expect(intl2.t('inbox')).toBe('Posteingang');
+  });
+
   it('change locale', async ({ expect }) => {
     await intl.change('de-DE');
     expect(intl.locale).toBe('de-DE');

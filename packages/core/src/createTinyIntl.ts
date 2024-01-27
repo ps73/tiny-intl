@@ -85,7 +85,7 @@ export function createTinyIntl<Locales extends string>(
   const subscriptions = new Set<TinyIntlSubscriptionCallback<Locales>>();
 
   async function change(nextLocale: Locales, staticDict?: TinyIntlDict) {
-    if (locale === nextLocale) {
+    if (locale === nextLocale && (staticDict || Object.keys(dict).length > 0)) {
       return dict;
     }
     locale = nextLocale;

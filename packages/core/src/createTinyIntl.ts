@@ -84,8 +84,8 @@ export function createTinyIntl<Locales extends string>(
   let dict: TinyIntlFlatDict = flattie(fallbackDict || {});
   const subscriptions = new Set<TinyIntlSubscriptionCallback<Locales>>();
 
-  async function change(nextLocale: Locales, staticDict?: TinyIntlDict) {
-    if (locale === nextLocale && (staticDict || Object.keys(dict).length > 0)) {
+  async function change(nextLocale: Locales, staticDict?: TinyIntlDict, forceLoad = false) {
+    if (locale === nextLocale && !forceLoad) {
       return dict;
     }
     locale = nextLocale;
@@ -227,7 +227,7 @@ export function createTinyIntl<Locales extends string>(
   async function mount() {
     if (mounted) return;
     mounted = true;
-    await change(detectDefaultLocale());
+    await change(detectDefaultLocale(), undefined, true);
   }
 
   return {

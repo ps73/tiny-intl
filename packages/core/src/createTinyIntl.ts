@@ -58,7 +58,7 @@ export type TinyIntl<Locales extends string> = {
   rt: (date: Date | string | number, options?: TinyIntlRelativeTimeFormatOptions) => string;
   collator: (options?: Intl.CollatorOptions) => (x: string, y: string) => number;
   sort: (items: string[], options?: Intl.CollatorOptions) => string[];
-  list: (items: string[], options?: Intl.ListFormatOptions) => string;
+  list: (items: string[], options?: Intl.ListFormatOptions | 'AND' | 'OR') => string;
   subscribe: (cb: TinyIntlSubscriptionCallback<Locales>) => () => void;
   mount: () => Promise<void>;
 };

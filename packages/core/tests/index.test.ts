@@ -287,6 +287,27 @@ describe('@tiny-intl/core', () => {
       fallbackLocale: 'de-DE',
     });
     expect(detected).toBe('en-US');
+    globalThis.navigator = {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      language: undefined,
+      languages: [],
+    };
+    detected = detectBrowserLocale({
+      supportedLocales: ['en-US', 'de-DE', 'sv-SE'],
+      fallbackLocale: 'de-DE',
+    });
+    expect(detected).toBe('de-DE');
+    globalThis.navigator = {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      language: undefined,
+    };
+    detected = detectBrowserLocale({
+      supportedLocales: ['en-US', 'de-DE', 'sv-SE'],
+      fallbackLocale: 'de-DE',
+    });
+    expect(detected).toBe('de-DE');
   });
 
   it('relative time format helper', ({ expect }) => {

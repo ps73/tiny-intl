@@ -10,21 +10,28 @@
   "license": "MIT",
   "type": "module",
   "files": [
-    "lib"
+    "lib",
+    "src"
   ],
-  "main": "./lib/index.umd.cjs",
-  "module": "./lib/index.js",
-  "types": "./lib/types/index.d.ts",
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.js",
+  "types": "./lib/esm/index.d.ts",
   "exports": {
     ".": {
-      "import": "./lib/index.js",
-      "require": "./lib/index.umd.cjs",
-      "types": "./lib/types/index.d.ts"
+      "import": "./lib/esm/index.js",
+      "require": "./lib/cjs/index.js",
+      "types": "./lib/esm/types/index.d.ts"
+    },
+    "./utils": {
+      "import": "./lib/esm/utils/index.js",
+      "require": "./lib/cjs/utils/index.js",
+      "types": "./lib/esm/utils/index.d.ts"
     }
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build && npm run build2",
+    "build2": "FORMAT=esm tsup && FORMAT=cjs tsup",
     "preview": "vite preview",
     "test": "vitest",
     "coverage": "vitest run --coverage"
@@ -32,6 +39,7 @@
   "devDependencies": {
     "@vitest/coverage-v8": "^0.34.6",
     "rollup-plugin-visualizer": "^5.9.2",
+    "tsup": "^8.0.1",
     "typescript": "^5.2.2",
     "vite": "^4.1.0",
     "vite-plugin-dts": "3.6.0",

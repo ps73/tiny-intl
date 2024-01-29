@@ -76,5 +76,13 @@ module.exports = {
         '@gridventures/eslint-config-base/prettier',
       ],
     },
+
+    {
+      files: ['**/*.config.*'],
+
+      rules: {
+        'import/no-extraneous-dependencies': 'off',
+      },
+    },
   ],
 };

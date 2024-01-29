@@ -7,7 +7,7 @@ import { defineConfig } from 'vitest/config'; // eslint-disable-line import/no-u
 export default defineConfig({
   plugins: [
     dts({
-      outDir: resolve(__dirname, 'lib', 'types'),
+      outDir: resolve(__dirname, 'dist', 'types'),
       insertTypesEntry: true,
     }),
     visualizer({
@@ -17,7 +17,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: resolve(__dirname, 'lib'),
+    outDir: resolve(__dirname, 'dist'),
     minify: false,
     lib: {
       // Could also be a dictionary or array of multiple entry points

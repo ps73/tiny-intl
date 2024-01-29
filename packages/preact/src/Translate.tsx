@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import type { TinyIntlTranslateTemplate } from '../../core/lib/types';
+import type { TinyIntlTranslateTemplate } from '@tiny-intl/core';
 
 import { useCallback, useContext, useEffect, useState } from 'preact/compat';
 

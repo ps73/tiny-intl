@@ -1,6 +1,6 @@
 import type { TinyIntl, TinyIntlDict } from '../src';
 
-import { afterEach, describe, it } from 'vitest';
+import { vi, afterEach, describe, it } from 'vitest';
 
 import { createTinyIntl, detectBrowserLocale, detectLocale } from '../src';
 import { relativeTimeFormatForDiff } from '../src/utils';
@@ -255,54 +255,42 @@ describe('@tiny-intl/core', () => {
   });
 
   it('detect browser locale', ({ expect }) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // eslint-disable-next-line no-global-assign
-    globalThis.navigator = undefined;
+    vi.stubGlobal('navigator', undefined);
     let detected = detectBrowserLocale({
       supportedLocales: ['en-US', 'de-DE', 'sv-SE'],
       fallbackLocale: 'de-DE',
     });
     expect(detected).toBe('de-DE');
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // eslint-disable-next-line no-global-assign
-    globalThis.navigator = {
+    vi.stubGlobal('navigator', {
       languages: ['sv-SE', 'en-US'],
       language: 'en-US',
-    };
+    });
     detected = detectBrowserLocale({
       supportedLocales: ['en-US', 'de-DE', 'sv-SE'],
       fallbackLocale: 'de-DE',
     });
     expect(detected).toBe('sv-SE');
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // eslint-disable-next-line no-global-assign
-    globalThis.navigator = {
+    vi.stubGlobal('navigator', {
       language: 'en-US',
-    };
+      languages: undefined,
+    });
     detected = detectBrowserLocale({
       supportedLocales: ['en-US', 'de-DE', 'sv-SE'],
       fallbackLocale: 'de-DE',
     });
     expect(detected).toBe('en-US');
-    globalThis.navigator = {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+    vi.stubGlobal('navigator', {
       language: undefined,
       languages: [],
-    };
+    });
     detected = detectBrowserLocale({
       supportedLocales: ['en-US', 'de-DE', 'sv-SE'],
       fallbackLocale: 'de-DE',
     });
     expect(detected).toBe('de-DE');
-    globalThis.navigator = {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+    vi.stubGlobal('navigator', {
       language: undefined,
-    };
+    });
     detected = detectBrowserLocale({
       supportedLocales: ['en-US', 'de-DE', 'sv-SE'],
       fallbackLocale: 'de-DE',

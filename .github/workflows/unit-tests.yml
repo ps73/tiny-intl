@@ -1,0 +1,38 @@
+name: Run unit tests
+
+on:
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+jobs:
+  build:
+    name: 'Run tests'
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16, 18, 20, 21]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: restore caches
+      uses: actions/cache@v2
+      with:
+        path: |
+          ./node_modules
+          ./.coverage
+          ./.eslintcache
+        key: ${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
+    - name: Run tests
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm install && cd packages/core && npm run coverage
+    # - name: Publish code coverage
+    #   uses: paambaati/codeclimate-action@v3.0.0
+    #   env:
+    #     CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_REPORTER_ID }}

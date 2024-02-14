@@ -1,6 +1,6 @@
 {
   "name": "@tiny-intl/preact",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/gridventures/tiny-intl",
@@ -39,6 +39,6 @@
     "vite-plugin-dts": "^3.6.4"
   },
   "dependencies": {
-    "@tiny-intl/core": "^1.1.5"
+    "@tiny-intl/core": "^1.1.6"
   }
 }

@@ -44,6 +44,7 @@ module.exports = {
       },
     ],
     'no-console': ['error', { allow: ['warn', 'error'] }],
+    'import/no-unresolved': 'off',
   },
 
   overrides: [

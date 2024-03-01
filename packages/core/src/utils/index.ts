@@ -1,1 +1,1 @@
-export * from './relativeTimeFormat';
+export * from './relativeTimeFormat.js';

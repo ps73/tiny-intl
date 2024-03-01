@@ -1,3 +1,3 @@
-export * from './createTinyIntl';
-export * from './detectBrowserLocale';
-export * from './detectLocale';
+export * from './createTinyIntl.js';
+export * from './detectBrowserLocale.js';
+export * from './detectLocale.js';

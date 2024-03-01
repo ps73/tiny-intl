@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { flattie } from 'flattie';
-
-import { automaticRelativeTimeFormat } from './utils';
+import { flattie } from './utils/flattie.js';
+import { automaticRelativeTimeFormat } from './utils/index.js';
 
 export type TinyIntlPluralDefinition = {
   zero?: string;

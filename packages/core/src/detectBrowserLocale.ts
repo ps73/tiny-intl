@@ -1,4 +1,4 @@
-import { detectLocale } from './detectLocale';
+import { detectLocale } from './detectLocale.js';
 
 export function detectBrowserLocale<T extends string>(options: {
   supportedLocales: T[];

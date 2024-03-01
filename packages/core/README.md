@@ -2,7 +2,7 @@
 
 ![Bundle Size](https://deno.bundlejs.com/badge?q=@tiny-intl/core&treeshake=%5B*%5D)
 
-A tiny library to translate or transform strings, dates and numbers based on native Intl.
+A tiny and zero-dependency library to translate or transform strings, dates and numbers based on native Intl.
 
 ## Installation
 

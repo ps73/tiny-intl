@@ -101,7 +101,3 @@ export function Translate(props: TranslateProps) {
 }
 
 export const Trans = Translate;
-
-Translate.defaultProps = {
-  children: undefined,
-};

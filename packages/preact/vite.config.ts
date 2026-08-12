@@ -27,7 +27,7 @@ export default defineConfig({
       name: 'tinyIntl',
       // the proper extensions will be added
       fileName: 'index',
-      formats: ['es', 'cjs', 'umd'],
+      formats: ['es', 'cjs'],
     },
     rollupOptions: {
       external: ['preact', 'preact/compat'],

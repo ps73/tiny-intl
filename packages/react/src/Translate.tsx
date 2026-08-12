@@ -63,19 +63,19 @@ export function Translate(props: TranslateProps) {
   const [changed, setChanged] = useState(0);
 
   const translateFn = useCallback(() => {
-    if (typeof count === 'number') {
+    if (count != null) {
       return tc(name, count, options);
     }
 
-    if (date !== undefined && !relative) {
+    if (date != null && !relative) {
       return dt(date, options);
     }
 
-    if (date !== undefined && relative) {
+    if (date != null && relative) {
       return rt(date, options);
     }
 
-    if (typeof number === 'number') {
+    if (number != null) {
       return n(number, options);
     }
 

@@ -16,17 +16,29 @@
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
   "types": "./lib/esm/index.d.ts",
+  "sideEffects": false,
   "exports": {
     ".": {
-      "import": "./lib/esm/index.js",
-      "require": "./lib/cjs/index.js",
-      "types": "./lib/esm/types/index.d.ts"
+      "import": {
+        "types": "./lib/esm/index.d.ts",
+        "default": "./lib/esm/index.js"
+      },
+      "require": {
+        "types": "./lib/cjs/index.d.cts",
+        "default": "./lib/cjs/index.js"
+      }
     },
     "./utils": {
-      "import": "./lib/esm/utils/index.js",
-      "require": "./lib/cjs/utils/index.js",
-      "types": "./lib/esm/utils/index.d.ts"
-    }
+      "import": {
+        "types": "./lib/esm/utils/index.d.ts",
+        "default": "./lib/esm/utils/index.js"
+      },
+      "require": {
+        "types": "./lib/cjs/utils/index.d.cts",
+        "default": "./lib/cjs/utils/index.js"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "dev": "vite",

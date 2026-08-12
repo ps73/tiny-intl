@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint --config ./.eslintrc.cjs --ignore-path ./.eslintignore --cache",
+    "lint:all": "npm run lint -- .",
+    "test": "lerna run test -- --run",
+    "coverage": "lerna run coverage",
     "release": "lerna publish --no-private",
     "git-hooks:commit-msg": "commitlint --edit",
     "git-hooks:pre-commit": "lint-staged",

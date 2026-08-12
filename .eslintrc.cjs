@@ -70,15 +70,6 @@ module.exports = {
     },
 
     {
-      files: ['packages/solid-js/**/*.ts', 'packages/solid-js/**/*.tsx'],
-
-      extends: [
-        '@gridventures/eslint-config-solid-js/typescript',
-        '@gridventures/eslint-config-base/prettier',
-      ],
-    },
-
-    {
       files: ['**/*.config.*'],
 
       rules: {

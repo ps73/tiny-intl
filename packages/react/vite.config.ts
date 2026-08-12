@@ -30,7 +30,7 @@ export default defineConfig({
       name: 'tinyIntl',
       // the proper extensions will be added
       fileName: 'index',
-      formats: ['es', 'cjs', 'umd'],
+      formats: ['es', 'cjs'],
     },
     rollupOptions: {
       external: ['react', 'react-dom', 'react-jsx-runtime'],

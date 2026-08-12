@@ -15,12 +15,14 @@
   "main": "./lib/index.umd.cjs",
   "module": "./lib/index.js",
   "types": "./lib/types/index.d.ts",
+  "sideEffects": false,
   "exports": {
     ".": {
+      "types": "./lib/types/index.d.ts",
       "import": "./lib/index.js",
-      "require": "./lib/index.umd.cjs",
-      "types": "./lib/types/index.d.ts"
-    }
+      "require": "./lib/index.umd.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "dev": "vite",

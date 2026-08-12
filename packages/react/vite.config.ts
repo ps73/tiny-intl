@@ -2,8 +2,8 @@ import { resolve } from 'path';
 
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import { defineConfig } from 'vitest/config'; // eslint-disable-line import/no-unresolved
 
 export default defineConfig({
   plugins: [
@@ -45,5 +45,9 @@ export default defineConfig({
   },
   esbuild: {
     jsxInject: `import * as React from 'react'`,
+  },
+  test: {
+    environment: 'jsdom',
+    globals: false,
   },
 });

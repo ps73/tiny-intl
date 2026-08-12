@@ -76,5 +76,16 @@ module.exports = {
         'import/no-extraneous-dependencies': 'off',
       },
     },
+
+    {
+      // Testing Library's `screen` export shadows the browser global of the
+      // same name; test files legitimately import it, so relax the rule
+      // only here rather than for the whole codebase.
+      files: ['packages/*/tests/**'],
+
+      rules: {
+        'no-shadow': 'off',
+      },
+    },
   ],
 };

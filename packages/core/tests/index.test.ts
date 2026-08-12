@@ -173,6 +173,142 @@ describe('@tiny-intl/core', () => {
     expect(intl.list(['a', 'b', 'c'], { type: 'disjunction' })).toBe('a, b, or c');
   });
 
+  // Forces a genuine locale change (twice, landing back on en-US) so every
+  // formatter cache is guaranteed empty before we start counting constructor
+  // calls. A plain `await intl.change('en-US')` is not reliable here because
+  // if the shared `intl` instance already sits on 'en-US' (the common case,
+  // since afterEach resets to it) that call hits the `change()` early return
+  // and clears nothing, leaving caches polluted by whichever earlier test
+  // ran last.
+  async function resetFormatterCaches() {
+    await intl.change('de-DE');
+    await intl.change('en-US');
+  }
+
+  // `vi.spyOn(Intl, 'RelativeTimeFormat' | 'ListFormat')` blows up with
+  // "Constructor ... requires 'new'" in this environment (unlike NumberFormat,
+  // DateTimeFormat and Collator, which spy fine) — vitest's spy wrapper loses
+  // the internal slot these two constructors check for. As a fallback, swap
+  // the constructor for a subclass that counts `super()` calls, then restore
+  // it — the same direct-reassignment technique already used below in
+  // 'fallbacks if newer Intl features are not supported'.
+  function countingConstructor<T extends new (...args: never[]) => unknown>(original: T) {
+    const state = { calls: 0 };
+    class Counting extends (original as new (...args: never[]) => unknown) {
+      constructor(...args: never[]) {
+        super(...args);
+        state.calls += 1;
+      }
+    }
+    return { ctor: Counting as unknown as T, state };
+  }
+
+  it('reuses cached Intl.NumberFormat instances', async ({ expect }) => {
+    await resetFormatterCaches();
+
+    const numberFormatSpy = vi.spyOn(Intl, 'NumberFormat');
+    intl.n(1);
+    intl.n(2);
+    intl.n(3);
+    expect(numberFormatSpy).toHaveBeenCalledTimes(1);
+
+    intl.n(4, { style: 'percent' });
+    intl.n(5, { style: 'percent' });
+    expect(numberFormatSpy).toHaveBeenCalledTimes(2);
+    numberFormatSpy.mockRestore();
+  });
+
+  it('reuses cached Intl.DateTimeFormat instances', async ({ expect }) => {
+    await resetFormatterCaches();
+
+    const dateTimeFormatSpy = vi.spyOn(Intl, 'DateTimeFormat');
+    intl.dt('2021-01-01');
+    intl.dt('2021-06-15');
+    intl.dt('2022-12-31');
+    expect(dateTimeFormatSpy).toHaveBeenCalledTimes(1);
+
+    intl.dt('2021-01-01', { dateStyle: 'full' });
+    intl.dt('2021-06-15', { dateStyle: 'full' });
+    expect(dateTimeFormatSpy).toHaveBeenCalledTimes(2);
+    dateTimeFormatSpy.mockRestore();
+  });
+
+  it('reuses cached Intl.RelativeTimeFormat instances', async ({ expect }) => {
+    await resetFormatterCaches();
+
+    const oldDateNow = Date.now;
+    Date.now = () => new Date('2020-01-01').getTime();
+
+    /* eslint-disable @typescript-eslint/ban-ts-comment */
+    const originalRelativeTimeFormat = Intl.RelativeTimeFormat;
+    const { ctor, state } = countingConstructor(originalRelativeTimeFormat);
+    // @ts-ignore
+    Intl.RelativeTimeFormat = ctor;
+
+    intl.rt('2021-01-01');
+    intl.rt('2021-02-01');
+    intl.rt('2021-03-01');
+    expect(state.calls).toBe(1);
+
+    intl.rt('2021-01-01', { style: 'long' });
+    intl.rt('2021-02-01', { style: 'long' });
+    expect(state.calls).toBe(2);
+
+    // @ts-ignore
+    Intl.RelativeTimeFormat = originalRelativeTimeFormat;
+    /* eslint-enable @typescript-eslint/ban-ts-comment */
+    Date.now = oldDateNow;
+  });
+
+  it('reuses cached Intl.ListFormat instances', async ({ expect }) => {
+    await resetFormatterCaches();
+
+    /* eslint-disable @typescript-eslint/ban-ts-comment */
+    const originalListFormat = Intl.ListFormat;
+    const { ctor, state } = countingConstructor(originalListFormat);
+    // @ts-ignore
+    Intl.ListFormat = ctor;
+
+    intl.list(['a', 'b', 'c']);
+    intl.list(['d', 'e']);
+    intl.list(['f']);
+    expect(state.calls).toBe(1);
+
+    intl.list(['a', 'b', 'c'], { type: 'disjunction' });
+    intl.list(['d', 'e'], { type: 'disjunction' });
+    expect(state.calls).toBe(2);
+
+    // @ts-ignore
+    Intl.ListFormat = originalListFormat;
+    /* eslint-enable @typescript-eslint/ban-ts-comment */
+  });
+
+  it('reuses cached Intl.Collator instances', async ({ expect }) => {
+    await resetFormatterCaches();
+
+    const collatorSpy = vi.spyOn(Intl, 'Collator');
+    intl.collator();
+    intl.collator();
+    intl.collator();
+    expect(collatorSpy).toHaveBeenCalledTimes(1);
+
+    intl.collator({ caseFirst: 'upper' });
+    intl.collator({ caseFirst: 'upper' });
+    expect(collatorSpy).toHaveBeenCalledTimes(2);
+    collatorSpy.mockRestore();
+  });
+
+  it('rebuilds Intl formatters after a locale change', async ({ expect }) => {
+    await resetFormatterCaches();
+
+    const spy = vi.spyOn(Intl, 'NumberFormat');
+    intl.n(1000);
+    await intl.change('de-DE');
+    intl.n(1000);
+    expect(spy).toHaveBeenCalledTimes(2);
+    spy.mockRestore();
+  });
+
   it('fallbacks if newer Intl features are not supported', async ({ expect }) => {
     await intl.change('de-DE');
     /* eslint-disable @typescript-eslint/ban-ts-comment */

@@ -8,6 +8,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
+
 import { build } from 'esbuild';
 
 const budgets = JSON.parse(readFileSync(new URL('./size-budget.json', import.meta.url), 'utf8'));
@@ -45,16 +46,15 @@ for (const target of TARGETS) {
   if (budget === undefined) {
     console.error(`✗ ${target.name}: no budget in scripts/size-budget.json`);
     failed = true;
-    continue;
+  } else {
+    const delta = budget - size;
+    const mark = size > budget ? '✗' : '✓';
+    console.log(
+      `${mark} ${target.name.padEnd(20)} ${String(size).padStart(5)} B ` +
+        `(budget ${budget} B, ${delta >= 0 ? `${delta} B headroom` : `${-delta} B OVER`})`,
+    );
+    if (size > budget) failed = true;
   }
-
-  const delta = budget - size;
-  const status = size > budget ? '✗' : '✓';
-  console.log(
-    `${status} ${target.name.padEnd(20)} ${String(size).padStart(5)} B ` +
-      `(budget ${budget} B, ${delta >= 0 ? `${delta} B headroom` : `${-delta} B OVER`})`,
-  );
-  if (size > budget) failed = true;
 }
 
 if (failed) {

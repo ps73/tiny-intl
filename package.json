@@ -8,6 +8,8 @@
     "lint:all": "npm run lint -- .",
     "build": "npm run build --workspace @tiny-intl/core && npm run build --workspace @tiny-intl/react && npm run build --workspace @tiny-intl/preact",
     "size": "node ./scripts/bundle-size.mjs",
+    "publint": "publint packages/core && publint packages/react && publint packages/preact",
+    "attw": "attw --pack packages/core --ignore-rules no-resolution && attw --pack packages/react && attw --pack packages/preact",
     "test": "lerna run test -- --run",
     "coverage": "lerna run coverage",
     "release": "lerna publish --no-private",

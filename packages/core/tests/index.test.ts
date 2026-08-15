@@ -20,6 +20,15 @@ const loadDict = (locale: string): TinyIntlDict => {
         one: '{{title}} and {{count}} more document selected',
         other: '{{title}} and {{count}} more documents selected',
       },
+      trash: {
+        zero: 'Trash is empty',
+        one: '1 item in trash',
+        other: '{{count}} items in trash',
+      },
+      folder: {
+        one: '1 folder',
+        other: '{{count}} folders',
+      },
     };
   }
   if (locale === 'de-DE') {
@@ -35,6 +44,15 @@ const loadDict = (locale: string): TinyIntlDict => {
         zero: '{{title}} ausgewählt',
         one: '{{title}} und ein weiteres Dokument ausgewählt',
         other: '{{title}} und {{count}} weitere Dokumente ausgewählt',
+      },
+      trash: {
+        zero: 'Papierkorb ist leer',
+        one: '1 Element im Papierkorb',
+        other: '{{count}} Elemente im Papierkorb',
+      },
+      folder: {
+        one: '1 Ordner',
+        other: '{{count}} Ordner',
       },
     };
   }
@@ -107,6 +125,22 @@ describe('@tiny-intl/core', () => {
     expect(intl.tc('plusXDocumentsSelected', 1, { title: 'My Doc' })).toBe(
       'My Doc und ein weiteres Dokument ausgewählt',
     );
+  });
+
+  it('uses the zero entry when count is 0 and one is defined', async ({ expect }) => {
+    await intl.change('en-US');
+    expect(intl.tc('trash', 0)).toBe('Trash is empty');
+    expect(intl.tc('trash', 1)).toBe('1 item in trash');
+    expect(intl.tc('trash', 5)).toBe('5 items in trash');
+
+    await intl.change('de-DE');
+    expect(intl.tc('trash', 0)).toBe('Papierkorb ist leer');
+    expect(intl.tc('trash', 5)).toBe('5 Elemente im Papierkorb');
+  });
+
+  it('falls back to the CLDR category when no zero entry is defined', async ({ expect }) => {
+    await intl.change('de-DE');
+    expect(intl.tc('folder', 0)).toBe('0 Ordner');
   });
 
   it('date formatting', async ({ expect }) => {

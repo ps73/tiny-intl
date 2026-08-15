@@ -117,8 +117,8 @@ export function createTinyIntl<Locales extends string>(
   }
 
   function tc(key: string, count: number, templateParams?: TinyIntlTranslateTemplate): string {
-    const pluralKey = pluralRules.select(count);
-    const tKey = `${key}.${pluralKey}`;
+    const zeroKey = `${key}.zero`;
+    const tKey = count === 0 && dict[zeroKey] ? zeroKey : `${key}.${pluralRules.select(count)}`;
     return t(tKey, {
       count,
       ...templateParams,

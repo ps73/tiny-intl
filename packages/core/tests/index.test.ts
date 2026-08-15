@@ -491,4 +491,105 @@ describe('@tiny-intl/core', () => {
       expect(unit).toBe(u);
     });
   });
+
+  it('applies a staticDict for the current locale without a real change', async ({ expect }) => {
+    await intl.change('de-DE');
+    await intl.change('de-DE', { foo: 'bar' });
+    expect(intl.t('foo')).toBe('bar');
+  });
+
+  it('discards a superseded change when loads resolve out of order', async ({ expect }) => {
+    const resolvers: Record<string, (d: TinyIntlDict) => void> = {};
+    const racy = createTinyIntl<'en-US' | 'de-DE'>({
+      fallbackLocale: 'en-US',
+      supportedLocales: ['en-US', 'de-DE'],
+      loadDict: (loc) =>
+        new Promise((resolve) => {
+          resolvers[loc] = resolve;
+        }),
+    });
+
+    const first = racy.change('de-DE');
+    const second = racy.change('en-US');
+
+    // resolve the *newer* request first, then the stale one
+    resolvers['en-US']({ greeting: 'Hello' });
+    resolvers['de-DE']({ greeting: 'Hallo' });
+    await Promise.all([first, second]);
+
+    expect(racy.getLocale()).toBe('en-US');
+    expect(racy.t('greeting')).toBe('Hello'); // NOT 'Hallo'
+  });
+
+  it('notifies subscribers only for the winning change, not the superseded one', async ({
+    expect,
+  }) => {
+    const resolvers: Record<string, (d: TinyIntlDict) => void> = {};
+    const racy = createTinyIntl<'en-US' | 'de-DE'>({
+      fallbackLocale: 'en-US',
+      supportedLocales: ['en-US', 'de-DE'],
+      loadDict: (loc) =>
+        new Promise((resolve) => {
+          resolvers[loc] = resolve;
+        }),
+    });
+
+    const seenLocales: string[] = [];
+    racy.subscribe((nextLocale) => {
+      seenLocales.push(nextLocale);
+    });
+
+    const first = racy.change('de-DE');
+    const second = racy.change('en-US');
+
+    resolvers['en-US']({ greeting: 'Hello' });
+    resolvers['de-DE']({ greeting: 'Hallo' });
+    await Promise.all([first, second]);
+
+    expect(seenLocales).toEqual(['en-US']);
+  });
+
+  it('mount() is re-entrant and shares one load between concurrent callers', async ({ expect }) => {
+    let calls = 0;
+    let resolveLoad: (d: TinyIntlDict) => void = () => {};
+    const intl3 = createTinyIntl<'de-DE'>({
+      fallbackLocale: 'de-DE',
+      supportedLocales: ['de-DE'],
+      loadDict: () => {
+        calls += 1;
+        return new Promise((resolve) => {
+          resolveLoad = resolve;
+        });
+      },
+    });
+
+    const mount1 = intl3.mount();
+    const mount2 = intl3.mount();
+
+    let mount2Resolved = false;
+    mount2.then(
+      () => {
+        mount2Resolved = true;
+      },
+      () => {},
+    );
+
+    // Flush a few microtask ticks without resolving the load yet. A
+    // re-entrant mount2 must NOT resolve here — only a buggy mount() that
+    // returns an already-"mounted" promise while the first load is still in
+    // flight would resolve this early.
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(mount2Resolved).toBe(false);
+    expect(calls).toBe(1);
+
+    resolveLoad({ inbox: 'Posteingang' });
+    await Promise.all([mount1, mount2]);
+
+    expect(mount2Resolved).toBe(true);
+    expect(calls).toBe(1);
+    expect(intl3.t('inbox')).toBe('Posteingang');
+  });
 });

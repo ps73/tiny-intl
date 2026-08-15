@@ -45,7 +45,11 @@ export type CreateTinyIntlOptions<Locales extends string> = {
 export type TinyIntl<Locales extends string> = {
   locale: Locales;
   getLocale: () => Locales;
-  change: (locale: Locales, staticDict?: TinyIntlDict) => Promise<TinyIntlFlatDict>;
+  change: (
+    locale: Locales,
+    staticDict?: TinyIntlDict,
+    forceLoad?: boolean,
+  ) => Promise<TinyIntlFlatDict>;
   t: (key: string, templateParams?: TinyIntlTranslateTemplate) => string;
   tc: (key: string, count: number, templateParams?: TinyIntlTranslateTemplate) => string;
   n: (number: number, options?: Intl.NumberFormatOptions) => string;
@@ -72,7 +76,8 @@ export function createTinyIntl<Locales extends string>(
   const { fallbackLocale, loadDict, fallbackDict } = i18nOptions;
   const templateRegex = i18nOptions.templateRegex || /{{(.*?)}}/g;
 
-  let mounted = false;
+  let mountPromise: Promise<void> | undefined;
+  let generation = 0;
   let locale: Locales = fallbackLocale;
   let pluralRules: Intl.PluralRules = new Intl.PluralRules(fallbackLocale);
   const numberFormatCache = new Map<string, Intl.NumberFormat>();
@@ -84,9 +89,11 @@ export function createTinyIntl<Locales extends string>(
   const subscriptions = new Set<TinyIntlSubscriptionCallback<Locales>>();
 
   async function change(nextLocale: Locales, staticDict?: TinyIntlDict, forceLoad = false) {
-    if (locale === nextLocale && !forceLoad) {
+    if (locale === nextLocale && !forceLoad && !staticDict) {
       return dict;
     }
+    generation += 1;
+    const gen = generation;
     locale = nextLocale;
     pluralRules = new Intl.PluralRules(locale);
     numberFormatCache.clear();
@@ -97,7 +104,10 @@ export function createTinyIntl<Locales extends string>(
     if (staticDict) {
       dict = flattie<TinyIntlFlatDict, TinyIntlDict>(staticDict);
     } else if (loadDict) {
-      const nextDict = await loadDict(locale);
+      const nextDict = await loadDict(nextLocale);
+      if (gen !== generation) {
+        return dict;
+      }
       dict = flattie<TinyIntlFlatDict, TinyIntlDict>(nextDict);
     }
     subscriptions.forEach((cb) => cb(locale));
@@ -223,9 +233,10 @@ export function createTinyIntl<Locales extends string>(
   }
 
   async function mount() {
-    if (mounted) return;
-    mounted = true;
-    await change(detectDefaultLocale(), undefined, true);
+    if (!mountPromise) {
+      mountPromise = change(detectDefaultLocale(), undefined, true).then(() => undefined);
+    }
+    return mountPromise;
   }
 
   return {

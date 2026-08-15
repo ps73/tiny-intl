@@ -9,5 +9,5 @@ A tiny library to translate or transform strings, dates and numbers based on nat
 - [@tiny-intl/preact](./packages/preact) ![Preact Adapter Size](https://deno.bundlejs.com/badge?q=@tiny-intl/preact&treeshake=%5B*%5D&config=%7B%22esbuild%22:%7B%22external%22:%5B%22preact%22,%22preact/compat%22%5D%7D%7D)
 
 > [!NOTE]
-> `@tiny-intl/solid-js` was removed in the next release. Published versions up
+> `@tiny-intl/solid-js` has been removed. Published versions up
 > to 1.2.0 remain installable from npm but are no longer maintained.

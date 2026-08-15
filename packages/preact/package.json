@@ -1,6 +1,6 @@
 {
   "name": "@tiny-intl/preact",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ps73/tiny-intl.git",
@@ -52,6 +52,6 @@
     "vitest": "^0.34.6"
   },
   "dependencies": {
-    "@tiny-intl/core": "^1.2.0"
+    "@tiny-intl/core": "^2.0.0"
   }
 }

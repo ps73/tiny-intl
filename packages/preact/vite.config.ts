@@ -2,8 +2,8 @@ import { resolve } from 'path';
 
 import preact from '@preact/preset-vite';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import { defineConfig } from 'vitest/config'; // eslint-disable-line import/no-unresolved
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -27,7 +27,7 @@ export default defineConfig({
       name: 'tinyIntl',
       // the proper extensions will be added
       fileName: 'index',
-      formats: ['es', 'cjs', 'umd'],
+      formats: ['es', 'cjs'],
     },
     rollupOptions: {
       external: ['preact', 'preact/compat'],
@@ -38,5 +38,9 @@ export default defineConfig({
         },
       },
     },
+  },
+  test: {
+    environment: 'jsdom',
+    globals: false,
   },
 });

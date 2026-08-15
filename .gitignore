@@ -35,3 +35,6 @@ uploads/*
 !uploads/.init
 
 .husky/_
+
+# Claude Code agent scratch (worktrees, session state)
+.claude/

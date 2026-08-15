@@ -60,6 +60,12 @@ intl.tc('plusXDocumentsSelected', 3, { title: 'My-Doc' }); // My-Doc and 3 other
 intl.tc('plusXDocumentsSelected', 1, { title: 'My-Doc' }); // My-Doc and one other document selected
 ```
 
+> [!NOTE]
+> `zero` is honoured whenever `count` is `0` and the key defines a `zero` entry,
+> even in locales whose CLDR plural rules have no `zero` category (English and
+> German among them, where `0` otherwise selects `other`). Without a `zero`
+> entry, `0` falls back to the locale's own category.
+
 ### Formatting dates and date-times
 
 Look at [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) for more options.

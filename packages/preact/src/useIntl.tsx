@@ -5,7 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'pre
 
 export const TinyIntlContext = createContext<TinyIntl<string> | undefined>(undefined);
 
-export function useIntl() {
+export function useIntl(): TinyIntl<string> {
   const intl = useContext(TinyIntlContext);
 
   if (!intl) {

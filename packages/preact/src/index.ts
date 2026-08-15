@@ -1,2 +1,2 @@
-export * from './Translate';
-export * from './useIntl';
+export * from './Translate.js';
+export * from './useIntl.js';

@@ -20,7 +20,7 @@ const addPackageJson = () => {
 };
 
 export default defineConfig({
-  entry: ['src'],
+  entry: ['src/**/*.ts', '!src/**/*.d.ts'],
   target: 'es2022',
   format,
   minifyIdentifiers: false,

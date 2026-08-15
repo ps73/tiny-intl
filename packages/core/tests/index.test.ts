@@ -592,4 +592,22 @@ describe('@tiny-intl/core', () => {
     expect(calls).toBe(1);
     expect(intl3.t('inbox')).toBe('Posteingang');
   });
+
+  it('treats an empty string as a present translation', async ({ expect }) => {
+    const empty = createTinyIntl<'en-US'>({
+      fallbackLocale: 'en-US',
+      supportedLocales: ['en-US'],
+      loadDict: () => ({
+        blank: '',
+        trash: { zero: '', one: '1 item', other: '{{count}} items' },
+        greet: 'Hi{{suffix}}',
+      }),
+    });
+    await empty.mount();
+    expect(empty.t('blank')).toBe('');
+    expect(empty.tc('trash', 0)).toBe('');
+    expect(empty.tc('trash', 2)).toBe('2 items');
+    expect(empty.t('greet', { suffix: '' })).toBe('Hi');
+    expect(empty.t('missing')).toBe('[missing]'); // genuinely absent keys unchanged
+  });
 });

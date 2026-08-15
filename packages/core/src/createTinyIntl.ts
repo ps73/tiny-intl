@@ -117,18 +117,18 @@ export function createTinyIntl<Locales extends string>(
   function template(str: string, templateParams: TinyIntlTranslateTemplate) {
     return str.replace(
       templateRegex,
-      (_, key: string) => templateParams[key]?.toString() || `[${key}]`,
+      (_, key: string) => templateParams[key]?.toString() ?? `[${key}]`,
     );
   }
 
   function t(key: string, templateParams?: TinyIntlTranslateTemplate): string {
-    const value = dict[key] || dict[`${key}.one`] || `[${key}]`;
+    const value = dict[key] ?? dict[`${key}.one`] ?? `[${key}]`;
     return template(value, templateParams || {});
   }
 
   function tc(key: string, count: number, templateParams?: TinyIntlTranslateTemplate): string {
     const zeroKey = `${key}.zero`;
-    const tKey = count === 0 && dict[zeroKey] ? zeroKey : `${key}.${pluralRules.select(count)}`;
+    const tKey = count === 0 && zeroKey in dict ? zeroKey : `${key}.${pluralRules.select(count)}`;
     return t(tKey, {
       count,
       ...templateParams,

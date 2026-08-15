@@ -610,4 +610,22 @@ describe('@tiny-intl/core', () => {
     expect(empty.t('greet', { suffix: '' })).toBe('Hi');
     expect(empty.t('missing')).toBe('[missing]'); // genuinely absent keys unchanged
   });
+
+  it('allows mount() to be retried after a failed load', async ({ expect }) => {
+    let attempt = 0;
+    const flaky = createTinyIntl<'en-US'>({
+      fallbackLocale: 'en-US',
+      supportedLocales: ['en-US'],
+      loadDict: () => {
+        attempt += 1;
+        if (attempt === 1) return Promise.reject(new Error('network'));
+        return Promise.resolve({ hello: 'Hello' });
+      },
+    });
+
+    await expect(flaky.mount()).rejects.toThrow('network');
+    await flaky.mount();
+    expect(flaky.t('hello')).toBe('Hello');
+    expect(attempt).toBe(2);
+  });
 });

@@ -234,7 +234,13 @@ export function createTinyIntl<Locales extends string>(
 
   async function mount() {
     if (!mountPromise) {
-      mountPromise = change(detectDefaultLocale(), undefined, true).then(() => undefined);
+      mountPromise = change(detectDefaultLocale(), undefined, true).then(
+        () => undefined,
+        (err) => {
+          mountPromise = undefined;
+          throw err;
+        },
+      );
     }
     return mountPromise;
   }

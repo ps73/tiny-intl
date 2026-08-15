@@ -3,7 +3,7 @@
   "version": "1.2.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gridventures/tiny-intl",
+    "url": "git+https://github.com/ps73/tiny-intl.git",
     "directory": "packages/react"
   },
   "author": "Phil Schaffarzyk <phil.schaffarzyk@gmail.com>",
